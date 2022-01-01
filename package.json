@@ -1,0 +1,28 @@
+{
+  "name": "hope-well-hospital-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "live": "npx nodemon index.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruhulaminjr/Hope-Well-Hospital-Server.git"
+  },
+  "author": "team 19",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ruhulaminjr/Hope-Well-Hospital-Server/issues"
+  },
+  "homepage": "https://github.com/ruhulaminjr/Hope-Well-Hospital-Server#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.2",
+    "firebase-admin": "^10.0.1",
+    "mongodb": "^4.2.2"
+  }
+}
