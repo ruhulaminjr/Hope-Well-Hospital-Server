@@ -35,3 +35,20 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
 });
 // mongodb connect and server api
+async function run() {
+  try {
+    await client.connect();
+    const hopewelldb = client.db("HopeWellDB");
+    console.log("db connected succesfully")
+  } finally {
+  }
+}
+run().catch((error) => console.log(error));
+
+app.get("/", (req, res) => {
+  res.send("Server Running succesfully");
+});
+
+app.listen(port, () => {
+  console.log(`server running on http http://localhost:${port}/`);
+});
