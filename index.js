@@ -39,7 +39,12 @@ async function run() {
   try {
     await client.connect();
     const hopewelldb = client.db("HopeWellDB");
-    console.log("db connected succesfully")
+    const usersCollection = hopewelldb.collection("usersCollection");
+    app.post("/adduser", async (req, res) => {
+      const user = req.body;
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
   } finally {
   }
 }
