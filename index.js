@@ -16,6 +16,7 @@ admin.initializeApp({
 async function verifyUserToken(req, res, next) {
   if (req.headers?.authorization?.startsWith("Bearer ")) {
     const userToken = req.headers.authorization.split(" ")[1];
+    console.log(userToken);
     try {
       const decodedUser = await admin.auth().verifyIdToken(userToken);
       req.decodedEmail = decodedUser.email;
@@ -39,11 +40,58 @@ async function run() {
   try {
     await client.connect();
     const hopewelldb = client.db("HopeWellDB");
+    // database collection
     const usersCollection = hopewelldb.collection("usersCollection");
+    const blogsCollection = hopewelldb.collection("blogsCollection");
+    const doctorsCollection = hopewelldb.collection("DoctorsCollection");
+    // getting blog data
+    app.get("/blogs", async (req, res) => {
+      const data = await blogsCollection.find({}).toArray();
+      res.send(data);
+    });
+    app.get("/doctors", async (req, res) => {
+      const data = await doctorsCollection.find({}).toArray();
+      res.send(data);
+    });
+    // blog add end
     app.post("/adduser", async (req, res) => {
       const user = req.body;
       const result = await usersCollection.insertOne(user);
       res.send(result);
+    });
+    app.get("/getadmin/:email", async (req, res) => {
+      const email = req.params.email;
+      const data = await usersCollection.findOne({ email });
+      if (data.role === "admin") {
+        res.send({ admin: true });
+      } else {
+        res.send({ admin: false });
+      }
+    });
+    app.post("/makeadmin/", verifyUserToken, async (req, res) => {
+      const userEmail = req.body.email;
+      const reqUserEmail = req.decodedEmail;
+      const verifyuser = await usersCollection.findOne({
+        email: reqUserEmail,
+      });
+      if (verifyuser.role === "admin") {
+        let findUser = await usersCollection.findOne({ email: userEmail });
+        if (findUser) {
+          console.log(findUser);
+          const filter = { email: userEmail };
+          const updateDoc = { $set: { role: "admin" } };
+          const MakeuserAdmin = await usersCollection.updateOne(
+            filter,
+            updateDoc,
+            {
+              upsert: true,
+            }
+          );
+          res.send(MakeuserAdmin);
+        }
+      } else {
+        res.status(401);
+      }
     });
   } finally {
   }
