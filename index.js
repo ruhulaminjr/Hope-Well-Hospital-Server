@@ -84,7 +84,6 @@ async function run() {
     // blog add end
     app.post("/adduser", async (req, res) => {
       const user = req.body;
-      user.role = "user";
       const result = await usersCollection.insertOne(user);
       res.send(result);
     });
