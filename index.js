@@ -84,6 +84,7 @@ async function run() {
     // blog add end
     app.post("/adduser", async (req, res) => {
       const user = req.body;
+      user.role = "user";
       const result = await usersCollection.insertOne(user);
       res.send(result);
     });
@@ -96,29 +97,14 @@ async function run() {
         res.send({ admin: false });
       }
     });
-    app.post("/makeadmin/", verifyUserToken, async (req, res) => {
+    app.post("/makeadmin/", async (req, res) => {
       const userEmail = req.body.email;
-      const reqUserEmail = req.decodedEmail;
-      const verifyuser = await usersCollection.findOne({
-        email: reqUserEmail,
+      const filter = { email: userEmail };
+      const updateDoc = { $set: { role: "admin" } };
+      const MakeuserAdmin = await usersCollection.updateOne(filter, updateDoc, {
+        upsert: true,
       });
-      if (verifyuser.role === "admin") {
-        let findUser = await usersCollection.findOne({ email: userEmail });
-        if (findUser) {
-          const filter = { email: userEmail };
-          const updateDoc = { $set: { role: "admin" } };
-          const MakeuserAdmin = await usersCollection.updateOne(
-            filter,
-            updateDoc,
-            {
-              upsert: true,
-            }
-          );
-          res.send(MakeuserAdmin);
-        }
-      } else {
-        res.status(401);
-      }
+      res.send(MakeuserAdmin);
     });
   } finally {
   }
